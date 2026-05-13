@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>PETPUJA</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial,sans-serif;
+        }
+
+        body{
+            background:#fff5f0;
+        }
+
+        /* =========================
+           WELCOME SCREEN
+        ========================== */
+
+        #welcomeScreen{
+
+            height:100vh;
+
+            display:flex;
+
+            flex-direction:column;
+
+            justify-content:center;
+
+            align-items:center;
+
+            background:linear-gradient(
+            to right,
+            #ff6a00,
+            #ff3c00);
+
+            color:white;
+
+            text-align:center;
+        }
+
+        #welcomeScreen h1{
+
+            font-size:70px;
+
+            margin-bottom:20px;
+
+            letter-spacing:3px;
+        }
+
+        #welcomeScreen h2{
+
+            font-size:38px;
+
+            margin-bottom:15px;
+        }
+
+        #welcomeScreen p{
+
+            font-size:30px;
+        }
+
+        /* =========================
+           MENU SCREEN
+        ========================== */
+
+        #menuScreen{
+
+            display:none;
+
+            padding:20px;
+        }
+
+        .header{
+
+            text-align:center;
+
+            margin-bottom:35px;
+        }
+
+        .header h1{
+
+            color:#ff3c00;
+
+            font-size:50px;
+
+            margin-bottom:10px;
+        }
+
+        .header h2{
+
+            color:#444;
+
+            font-size:30px;
+        }
+
+        /* =========================
+           MENU GRID
+        ========================== */
+
+        .menu-container{
+
+            display:grid;
+
+            grid-template-columns:
+            repeat(auto-fit,minmax(220px,1fr));
+
+            gap:20px;
+        }
+
+        /* =========================
+           MENU CARD
+        ========================== */
+
+        .menu-card{
+
+            background:white;
+
+            padding:25px;
+
+            border-radius:15px;
+
+            text-align:center;
+
+            box-shadow:0 4px 10px
+            rgba(0,0,0,0.2);
+
+            transition:0.3s;
+        }
+
+        .menu-card:hover{
+
+            transform:scale(1.03);
+        }
+
+        .menu-card h3{
+
+            color:#ff3c00;
+
+            margin-bottom:10px;
+
+            font-size:28px;
+        }
+
+        .menu-card p{
+
+            font-size:22px;
+
+            margin-bottom:15px;
+        }
+
+        .menu-card button{
+
+            background:#ff3c00;
+
+            color:white;
+
+            border:none;
+
+            padding:12px 25px;
+
+            border-radius:8px;
+
+            font-size:16px;
+
+            cursor:pointer;
+        }
+
+        .menu-card button:hover{
+
+            background:#e63600;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- =========================
+     WELCOME SCREEN
+========================= -->
+
+<div id="welcomeScreen">
+
+    <h1>🍽️ PETPUJA</h1>
+
+    <h2 id="welcomeMessage">
+
+        Loading...
+
+    </h2>
+
+    <p id="tableNumber">
+
+        Table No : Loading...
+
+    </p>
+
+</div>
+
+<!-- =========================
+     MENU SCREEN
+========================= -->
+
+<div id="menuScreen">
+
+    <div class="header">
+
+        <h1>🍽️ PETPUJA MENU</h1>
+
+        <h2 id="menuTableNumber">
+
+        </h2>
+
+    </div>
+
+    <div class="menu-container">
+
+        <!-- CARD 1 -->
+
+        <div class="menu-card">
+
+            <h3>🍕 Pizza</h3>
+
+            <p>₹299</p>
+
+            <button>Add to Cart</button>
+
+        </div>
+
+        <!-- CARD 2 -->
+
+        <div class="menu-card">
+
+            <h3>🍔 Burger</h3>
+
+            <p>₹149</p>
+
+            <button>Add to Cart</button>
+
+        </div>
+
+        <!-- CARD 3 -->
+
+        <div class="menu-card">
+
+            <h3>🥤 Juice</h3>
+
+            <p>₹99</p>
+
+            <button>Add to Cart</button>
+
+        </div>
+
+        <!-- CARD 4 -->
+
+        <div class="menu-card">
+
+            <h3>🍨 Ice Cream</h3>
+
+            <p>₹120</p>
+
+            <button>Add to Cart</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+    // GET TABLE ID FROM URL
+
+    const params =
+        new URLSearchParams(
+        window.location.search);
+
+    const tableId =
+        params.get("tableId");
+
+    // IF TABLE ID NOT FOUND
+
+    if(!tableId){
+
+        alert("Table ID Missing");
+
+        throw new Error(
+        "Table ID Missing");
+    }
+
+    // BACKEND API CALL
+
+    fetch("/scan/" + tableId)
+
+    .then(response => {
+
+        if(!response.ok){
+
+            throw new Error(
+            "Backend API Error");
+        }
+
+        return response.json();
+    })
+
+    .then(data => {
+
+        // WELCOME MESSAGE
+
+        document.getElementById(
+        "welcomeMessage"
+        ).innerText =
+        data.welcomeMessage;
+
+        // TABLE NUMBER
+
+        document.getElementById(
+        "tableNumber"
+        ).innerText =
+        "Table No : "
+        + data.tableNumber;
+
+        document.getElementById(
+        "menuTableNumber"
+        ).innerText =
+        "Table No : "
+        + data.tableNumber;
+
+        // SHOW MENU AFTER 3 SECONDS
+
+        setTimeout(() => {
+
+            document.getElementById(
+            "welcomeScreen"
+            ).style.display = "none";
+
+            document.getElementById(
+            "menuScreen"
+            ).style.display = "block";
+
+        },3000);
+
+    })
+
+    .catch(error => {
+
+        console.log(error);
+
+        alert("Backend connection failed");
+
+    });
+
+</script>
+
+</body>
+
+</html>
